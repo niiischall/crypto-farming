@@ -1,7 +1,7 @@
 {
-  "name": "defi-tutorial",
+  "name": "Token Farm",
   "version": "0.1.0",
-  "description": "DeFi Token Staking App",
+  "description": "DeFi Token Farming App",
   "author": "gregory@dappuniversity.com",
   "dependencies": {
     "babel-polyfill": "6.26.0",
