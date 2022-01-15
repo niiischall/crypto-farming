@@ -10,14 +10,30 @@
 </p>
 
 ## About The Project
+A decentralized application where an investor deposits a certain number of [DAI](https://makerdao.com/en/) coins and gets back extra coins as a reward for investing on the platform.
 
 ## Tech stack and libraries
+ - Solidity
+ - Ethereum Blockchain
+ - Metamask
+ - React
+ - web3.js
+ - Bootstrap
 
 ## Demo Video
 
 
-## 📝 License
 
+## Getting Started
+First, run the `React` development server:
+```bash
+npm run start
+# or
+yarn run start
+```
+
+
+## 📝 License
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
