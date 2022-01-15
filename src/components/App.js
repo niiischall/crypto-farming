@@ -1,37 +1,137 @@
-import React, { Component } from 'react'
-import Navbar from './Navbar'
-import './App.css'
+import React, { useEffect, useState } from "react";
+import Web3 from "web3";
 
-class App extends Component {
+import DaiToken from "../abis/DaiToken.json";
+import DappToken from "../abis/DappToken.json";
+import TokenFarm from "../abis/TokenFarm.json";
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      account: '0x0'
+import Navbar from "./Navbar";
+import "./App.css";
+
+const App = () => {
+  const [account, setAccount] = useState("");
+
+  const [daiToken, setDaiToken] = useState({});
+  const [daiTokenBalance, setDaiTokenBalance] = useState("0");
+
+  const [dappToken, setDappToken] = useState({});
+  const [dappTokenBalance, setDappTokenBalance] = useState("0");
+
+  const [tokenFarm, setTokenFarm] = useState({});
+  const [stakingBalance, setStakingBalance] = useState("0");
+
+  const [loading, setLoading] = useState(true);
+
+  //Function to connect crypto wallet with the application
+  const loadWeb3 = async () => {
+    if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum);
+      await window.ethereum.enable();
+    } else if (window.web3) {
+      window.web3 = new Web3(window.web3.currentProvider);
+    } else {
+      window.alert(
+        "Non-ethereum browser detected. You should consider trying Metamask!"
+      );
     }
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <Navbar account={this.state.account} />
-        <div className="container-fluid mt-5">
-          <div className="row">
-            <main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '600px' }}>
-              <div className="content mr-auto ml-auto">
-                <a
-                  href="http://www.dappuniversity.com/bootcamp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                </a>
-              </div>
-            </main>
-          </div>
+  //Function to get the account details from the connected wallets.
+  const loadAccounts = async () => {
+    const web3 = window.web3;
+    const accounts = await web3.eth.getAccounts();
+    setAccount(accounts[0]);
+  };
+
+  //Function to get blockchain details->accounts, tokens.
+  const loadBlockchainData = async () => {
+    const web3 = window.web3;
+    const networkId = await web3.eth.net.getId();
+
+    //Load DaiToken.
+    const daiTokenData = DaiToken.networks[networkId];
+    if (daiTokenData) {
+      const daiToken = new web3.eth.Contract(
+        DaiToken.abi,
+        daiTokenData.address
+      );
+      setDaiToken(daiToken);
+      let daiTokenBalance = await daiToken.methods.balanceOf(account).call();
+      setDaiTokenBalance(daiTokenBalance.toString());
+    } else {
+      window.alert("DaiToken contract not deployed to detect network.");
+    }
+
+    //Load DappToken.
+    const dappTokenData = DappToken.networks[networkId];
+    if (dappTokenData) {
+      const dappToken = new web3.eth.Contract(
+        DappToken.abi,
+        dappTokenData.address
+      );
+      setDappToken(dappToken);
+      let dappTokenBalance = await dappToken.methods.balanceOf(account).call();
+      setDappTokenBalance(dappTokenBalance.toString());
+    } else {
+      window.alert("DappToken contract not deployed to detect network.");
+    }
+
+    //Load TokenFarm.
+    const tokenFarmData = TokenFarm.networks[networkId];
+    if (tokenFarmData) {
+      const tokenFarm = new web3.eth.Contract(
+        TokenFarm.abi,
+        tokenFarmData.address
+      );
+      setTokenFarm(tokenFarmData);
+      const stakingBalance = await tokenFarm.methods
+        .stakingBalance(account)
+        .call();
+      setStakingBalance(stakingBalance.toString());
+    } else {
+      window.alert("TokenFarm contract not deployed to detect network.");
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadWeb3();
+    loadAccounts();
+  }, []);
+
+  useEffect(() => {
+    if (account) {
+      loadBlockchainData();
+    }
+  }, [account]);
+
+  console.log("DaiTokenBalance: " + daiTokenBalance);
+  console.log("DappTokenBalance: " + dappTokenBalance);
+  console.log("Staking Balance: " + stakingBalance);
+
+  return (
+    <div>
+      <Navbar account={account} />
+      <div className="container-fluid mt-5">
+        <div className="row">
+          <main
+            role="main"
+            className="col-lg-12 ml-auto mr-auto"
+            style={{ maxWidth: "600px" }}
+          >
+            <div className="content mr-auto ml-auto">
+              <a
+                href="http://www.dappuniversity.com/bootcamp"
+                target="_blank"
+                rel="noopener noreferrer"
+              ></a>
+            </div>
+          </main>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default App;
