@@ -21,7 +21,7 @@ A decentralized application where an investor deposits a certain number of [DAI]
  - Bootstrap
 
 ## Demo Video
-
+![Demo Video](https://user-images.githubusercontent.com/45312239/149637255-4b2675ce-fa6a-47d4-b700-587c3e0afee7.gif)
 
 
 ## Getting Started
@@ -47,6 +47,7 @@ If the above steps are done right, you'll see a message similar to this in your 
 Last and final step is to connect your wallet to your blockchain network. This can be done easily by going to the `Add Network` section in your wallet and connecting with the right RPC server.
 
 Once done, you're good to go. Then open [http://localhost:3000/](http://localhost:3000/) to see the app.
+
 
 ## 📝 License
 Distributed under the MIT License. See `LICENSE` for more information.
