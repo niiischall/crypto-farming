@@ -25,9 +25,6 @@ class App extends Component {
                   rel="noopener noreferrer"
                 >
                 </a>
-
-                <h1>Hello, World!</h1>
-
               </div>
             </main>
           </div>

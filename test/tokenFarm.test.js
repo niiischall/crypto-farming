@@ -129,6 +129,15 @@ contract("TokenFarm", ([owner, investor]) => {
 
       //Ensure that only owner can issue tokens
       await tokenFarm.issueTokens({ from: investor }).should.be.rejected;
+
+      //Unstake Tokens
+      await tokenFarm.unstakeTokens({ from: investor });
+      result = await daiToken.balanceOf(investor);
+      assert.equal(
+        result.toString(),
+        tokens("100"),
+        "Investor Dai Token balance is correct after unstaking."
+      );
     });
   });
 });
