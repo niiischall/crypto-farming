@@ -5,6 +5,7 @@ import DaiToken from "../abis/DaiToken.json";
 import DappToken from "../abis/DappToken.json";
 import TokenFarm from "../abis/TokenFarm.json";
 
+import Main from "./Main";
 import Navbar from "./Navbar";
 import "./App.css";
 
@@ -83,7 +84,7 @@ const App = () => {
         TokenFarm.abi,
         tokenFarmData.address
       );
-      setTokenFarm(tokenFarmData);
+      setTokenFarm(tokenFarm);
       const stakingBalance = await tokenFarm.methods
         .stakingBalance(account)
         .call();
@@ -93,6 +94,31 @@ const App = () => {
     }
 
     setLoading(false);
+  };
+
+  const stakeTokens = (amount) => {
+    setLoading(true);
+    daiToken.methods
+      .approve(tokenFarm._address, amount)
+      .send({ from: account })
+      .on("transactionHash", (hash) => {
+        tokenFarm.methods
+          .stakeTokens(amount)
+          .send({ from: account })
+          .on("transactionHash", (hash) => {
+            setLoading(false);
+          });
+      });
+  };
+
+  const unstakeTokens = () => {
+    setLoading(true);
+    tokenFarm.methods
+      .unstakeTokens()
+      .send({ from: account })
+      .on("transactionHash", (hash) => {
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -106,9 +132,24 @@ const App = () => {
     }
   }, [account]);
 
-  console.log("DaiTokenBalance: " + daiTokenBalance);
-  console.log("DappTokenBalance: " + dappTokenBalance);
-  console.log("Staking Balance: " + stakingBalance);
+  let content = null;
+  if (loading) {
+    content = (
+      <p id="loader" className="text-center">
+        Loading...
+      </p>
+    );
+  } else {
+    content = (
+      <Main
+        daiTokenBalance={daiTokenBalance}
+        dappTokenBalance={dappTokenBalance}
+        stakingBalance={stakingBalance}
+        stakeTokens={stakeTokens}
+        unstakeTokens={unstakeTokens}
+      />
+    );
+  }
 
   return (
     <div>
@@ -126,6 +167,7 @@ const App = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               ></a>
+              {content}
             </div>
           </main>
         </div>

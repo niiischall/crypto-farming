@@ -5,7 +5,7 @@ module.exports = async function(callback) {
     await tokenFarm.issueTokens();
 
     //Code goes here!
-    console.log("Issue tokens!");
+    console.log("Issued tokens!");
 
     //Calback
     callback();
